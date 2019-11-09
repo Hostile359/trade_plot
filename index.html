@@ -6,7 +6,7 @@
 <script type="text/javascript">
 	anychart.onDocumentReady(function () {
 		
-		anychart.data.loadJsonFile("./dat.json", function (data) {
+		anychart.data.loadJsonFile("./dat1.json", function (data) {
 			// set the data
 			var table = anychart.data.table('StartTime');
 			
@@ -20,8 +20,8 @@
 			var series = chart.plot(0).candlestick(mapping);
 			var tooltip = series.tooltip();
 			tooltip.format(function() {
-				console.log(this);
-				return this.seriesName + "\nOpen: " + this.ope
+				//console.log(this);
+				return this.seriesName + "\nOpen: " + this.open
 				  + "\nHigh: " + this.high + "\nLow: " + this.low 
 					+ "\nClose: " + this.close + "\nChange: " + ((this.close - this.open) / this.open) * 100 + "%";
 			});	
