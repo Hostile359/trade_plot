@@ -20,11 +20,15 @@
 			var series = chart.plot(0).candlestick(mapping);
 			var tooltip = series.tooltip();
 			tooltip.format(function() {
-				console.log(this);
+				//console.log(this);
+				var change = ((this.close - this.open) / this.open) * 100;
+				//console.log(change.toFixed(2));
 				return this.seriesName + "\nOpen: " + this.open
 				  + "\nHigh: " + this.high + "\nLow: " + this.low 
-					+ "\nClose: " + this.close + "\nChange: " + ((this.close - this.open) / this.open) * 100 + "%";
+					+ "\nClose: " + this.close + "\nChange: " + change.toFixed(2) + "%";
 			});	
+			
+			
 			
 			series.name('Interval ' + data[0].Interval);
 
@@ -38,6 +42,7 @@
 	
 	function timeConverter(UNIX_timestamp) {
 		var a = new Date(UNIX_timestamp);
+		//console.log(a);
 		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		var year = a.getFullYear();
 		var month = months[a.getMonth()];
