@@ -4,7 +4,6 @@
 </head>
 
 <script type="text/javascript">
-	//anychart.onDocumentReady(function () {
 	function getPlot() {
 		anychart.data.loadJsonFile(document.getElementById("filename").value, function (data) {
 			// set the data
@@ -23,7 +22,9 @@
 			//chart.tooltip().fontColor("gold");
 			chart.tooltip().background().fill("AliceBlue");
 			chart.tooltip().title().fontColor("black");
-			//chart.tooltip().titleFormat("asas");
+			chart.tooltip().titleFormat('{%x}{dateTimeFormat:yyyy.MM.dd HH:mm}');
+			chart.crosshair().xLabel().format('{%Value}{dateTimeFormat:yyyy.MM.dd}');
+
 			tooltip.format(function() {
 				//console.log(this);
 				var change = ((this.close - this.open) / this.open) * 100;
@@ -46,19 +47,18 @@
 
 			chart.draw();
 		});
-	}//);
-	
+	}
 	function timeConverter(UNIX_timestamp) {
 		var a = new Date(UNIX_timestamp);
 		//console.log(a);
-		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 		var year = a.getUTCFullYear();
 		var month = months[a.getUTCMonth()];
 		var date = a.getUTCDate();
 		var hour = a.getUTCHours();
 		var min = a.getUTCMinutes();
 		var sec = a.getUTCSeconds();
-		var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+		var time = year + '.' + month + '.' + date + ' ' + hour + ':' + min;// + ':' + sec ;
 		return time;
 	}
 </script>
