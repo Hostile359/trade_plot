@@ -20,7 +20,7 @@
 			var series = chart.plot(0).candlestick(mapping);
 			var tooltip = series.tooltip();
 			tooltip.format(function() {
-				//console.log(this);
+				console.log(this);
 				return this.seriesName + "\nOpen: " + this.open
 				  + "\nHigh: " + this.high + "\nLow: " + this.low 
 					+ "\nClose: " + this.close + "\nChange: " + ((this.close - this.open) / this.open) * 100 + "%";
@@ -28,12 +28,26 @@
 			
 			series.name('Interval ' + data[0].Interval);
 
-			chart.title('Interval ' + data[0].Interval);
+			chart.title('BTCUSDT, ' + data[0].Interval + ', ' + timeConverter(data[0].StartTime)
+			  + ' - ' + timeConverter(data[data.length - 1].EndTime));
 			chart.container('container');
 
 			chart.draw();
 		});
-});
+	});
+	
+	function timeConverter(UNIX_timestamp) {
+		var a = new Date(UNIX_timestamp);
+		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var year = a.getFullYear();
+		var month = months[a.getMonth()];
+		var date = a.getDate();
+		var hour = a.getHours();
+		var min = a.getMinutes();
+		var sec = a.getSeconds();
+		var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+		return time;
+	}
 </script>
 <body>
 	<div id="container"></div>
