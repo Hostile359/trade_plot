@@ -4,9 +4,9 @@
 </head>
 
 <script type="text/javascript">
-	anychart.onDocumentReady(function () {
-		
-		anychart.data.loadJsonFile("./dat1.json", function (data) {
+	//anychart.onDocumentReady(function () {
+	function getPlot() {
+		anychart.data.loadJsonFile(document.getElementById("filename").value, function (data) {
 			// set the data
 			var table = anychart.data.table('StartTime');
 			
@@ -46,7 +46,7 @@
 
 			chart.draw();
 		});
-	});
+	}//);
 	
 	function timeConverter(UNIX_timestamp) {
 		var a = new Date(UNIX_timestamp);
@@ -63,6 +63,8 @@
 	}
 </script>
 <body>
+	<input id="filename" type="text"><br>
+	<button onclick="getPlot()">Click</button>
 	<div id="container"></div>
 </body>
 </html>
