@@ -5,9 +5,7 @@
 
 <script type="text/javascript">
 	function getPlot() {
-	//anychart.onDocumentReady(function () {
 		anychart.data.loadJsonFile(document.getElementById("filename").value, function (data) {
-		//anychart.data.loadJsonFile("./dat.json", function (data) {
 			// set the data
 			var table = anychart.data.table('StartTime');
 			
@@ -20,7 +18,10 @@
 			// set the series
 			var series = chart.plot(0).candlestick(mapping);			
 			var tooltip = series.tooltip();
-
+			series.normal().fallingFill("red");
+			series.normal().fallingStroke("red");
+			series.normal().risingFill("green");
+			series.normal().risingStroke("green");
 			//series.tooltip().fontColor("gold");
 			//chart.tooltip().fontColor("gold");
 			chart.tooltip().background().fill("AliceBlue");
@@ -31,10 +32,11 @@
 				//console.log(this);
 				var change = ((this.close - this.open) / this.open) * 100;
 				//console.log(change.toFixed(2));
-				if(change >= 0)
+				if(change >= 0) {
 					chart.tooltip().fontColor("green");
-				else
+				}else {
 					chart.tooltip().fontColor("red");
+				}
 
 				return "Open: " + this.open
 				  + "\nHigh: " + this.high + "\nLow: " + this.low 
@@ -45,7 +47,7 @@
 			series.legendItem().format(function() {
 				
 				var change = ((this.close - this.open) / this.open) * 100;
-				console.log(this);
+				//console.log(this);
 
 				return "(" + data[0].Symbol + "; " + data[0].Interval + "; O: " + this.open
 				  + "; H: " + this.high + "; L: " + this.low 
@@ -61,7 +63,6 @@
 			chart.draw();
 		});
 	}
-	//});
 	function timeConverter(UNIX_timestamp) {
 		var a = new Date(UNIX_timestamp);
 		//console.log(a);
