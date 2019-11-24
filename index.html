@@ -4,8 +4,19 @@
 </head>
 
 <script type="text/javascript">
-	function getPlot() {
-		anychart.data.loadJsonFile(document.getElementById("filename").value, function (data) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/stat', false);
+	xhr.send();
+	var stat_file = xhr.responseText;
+	console.log(stat_file);
+	
+	xhr.open('GET', '/data', false);
+	xhr.send();
+	var data_file = xhr.responseText;
+	console.log(data_file);
+	
+	anychart.onDocumentReady(function () {
+		anychart.data.loadJsonFile(data_file, function (data) {
 			// set the data
 			var table = anychart.data.table('StartTime');
 			
@@ -22,8 +33,6 @@
 			series.normal().fallingStroke("red");
 			series.normal().risingFill("green");
 			series.normal().risingStroke("green");
-			//series.tooltip().fontColor("gold");
-			//chart.tooltip().fontColor("gold");
 			chart.tooltip().background().fill("AliceBlue");
 			chart.tooltip().title().fontColor("black");
 			chart.tooltip().titleFormat('{%x}{dateTimeFormat:yyyy.MM.dd HH:mm}');
@@ -58,11 +67,48 @@
 			
 			chart.title(data[0].Symbol + ', ' + data[0].Interval + ', ' + timeConverter(data[0].StartTime)
 			  + ' - ' + timeConverter(data[data.length - 1].EndTime));
-			chart.container('container');
+			
+			
+			anychart.data.loadJsonFile(stat_file, function (json) {
+				//console.log(json.orders[0].entry.time);
+				console.log(json);
+				var controller = chart.plot(0).annotations();
+				var verticalLine1 = controller.verticalLine({
+					xAnchor: json.start_time,
+				}).allowEdit(false);
+				verticalLine1.stroke("grey", 4, "10 2");
+				
+				var verticalLine2 = controller.verticalLine({
+					xAnchor: json.end_time,
+				}).allowEdit(false);
+				verticalLine2.stroke("grey", 4, "10 2");
+				
+				var markers = [];
+				
+				for(var i = 0; json.orders[i]; i++) {
+					//console.log(json.orders[i]);
+					markers.push({"date": json.orders[i].exit.time, "description": json.orders[i].stat.profit});
+					//annotation.allowEdit(false);
+					// create a Vertical Channel annotation
+					var ver_Range = controller.verticalRange({
+						xAnchor: json.orders[i].entry.time,
+						secondXAnchor: json.orders[i].exit.time,
+					}).allowEdit(false);
 
+					if (json.orders[i].stat.profit > 0) {
+						ver_Range.fill("green", 0.3).stroke("green");
+					}else {
+						ver_Range.fill("red", 0.3).stroke("red");
+					}
+				}
+				var eventMarkers = chart.plot(0).eventMarkers();
+				eventMarkers.data(markers);
+			});
+			
+			chart.container('plot');
 			chart.draw();
 		});
-	}
+	});
 	function timeConverter(UNIX_timestamp) {
 		var a = new Date(UNIX_timestamp);
 		//console.log(a);
@@ -82,8 +128,6 @@
 	}
 </script>
 <body>
-	<input id="filename" type="text"><br>
-	<button onclick="getPlot()">Click</button>
-	<div id="container"></div>
+	<div id="plot"></div>
 </body>
 </html>
