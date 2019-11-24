@@ -37,9 +37,6 @@ http.createServer(function (request, response) {
     fs.readFile(filePath, function (error, data) {
         response.end(data);
     });
-    /*http.get("/stat", function(request, response){
-		response.send(stat);
-	});*/
     return;
 }).listen(3000, function () {
     console.log("hello");

@@ -1,8 +1,21 @@
 <html>
 <head>
+  <meta charset="utf-8">
   <script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  
 </head>
-
+<style>
+	.container{margin-right: 0}
+	*{
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+</style>
 <script type="text/javascript">
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', '/stat', false);
@@ -87,7 +100,19 @@
 				
 				for(var i = 0; json.orders[i]; i++) {
 					//console.log(json.orders[i]);
-					markers.push({"date": json.orders[i].exit.time, "description": json.orders[i].stat.profit});
+					var desc_marker = "entry(reason: " + json.orders[i].entry.reason
+						+ ", price: " + json.orders[i].entry.price
+						+ ", quantity: " + json.orders[i].entry.quantity
+						+ ", total: " + json.orders[i].entry.total 
+						+ ")\nexit(reason: " + json.orders[i].exit.reason
+						+ ", price: " + json.orders[i].exit.price
+						+ ", quantity: " + json.orders[i].exit.quantity
+						+ ", total: " + json.orders[i].exit.total 
+						+ ", depo_value: " + json.orders[i].exit.depo_value
+						+ ", depo: " + json.orders[i].exit.depo
+						+ ")\nstat(duration: " + json.orders[i].stat.duation
+						+ ", profit: " + json.orders[i].stat.profit + ")";  
+					markers.push({"date": json.orders[i].exit.time, "description": desc_marker});
 					//annotation.allowEdit(false);
 					// create a Vertical Channel annotation
 					var ver_Range = controller.verticalRange({
@@ -103,6 +128,32 @@
 				}
 				var eventMarkers = chart.plot(0).eventMarkers();
 				eventMarkers.data(markers);
+				eventMarkers.tooltip().titleFormat('{%date}{dateTimeFormat:yyyy.MM.dd HH:mm}');
+				
+				var stat_text = "<strong>Параметры стратегии</strong><br>" 
+					+ "&emsp;StrategyName: " + json.params.StrategyName
+					+ "<br>&emsp;Symbol: " + json.params.Symbol
+					+ "<br>&emsp;Interval: " + json.params.Interval
+					+ "<br>&emsp;TakeProfit: " + json.params.TakeProfit
+					+ "<br>&emsp;Period: " + json.params.Period
+					+ "<br>&emsp;RatioEntry: " + json.params.RatioEntry
+					+ "<br>&emsp;RatioExit: " + json.params.RatioExit
+					+ "<br>&emsp;SkipAfterTradeCount: " + json.params.SkipAfterTradeCount
+					+ "<br>&emsp;GlobalPeriod: " + json.params.GlobalPeriod
+					+ "<br>&emsp;ATRPeriod: " + json.params.ATRPeriod + "<br><br>"
+						+ "<strong>Статистика по сделкам</strong><br>"
+						+ "&emsp;Trades<br>&emsp;&emsp;total: " + json.trades.total
+						+ "<br>&emsp;&emsp;win_count: " + json.trades.win_count
+						+ "<br>&emsp;&emsp;win: " + json.trades.win
+						+ "<br>&emsp;&emsp;lose_count: " + json.trades.lose_count
+						+ "<br>&emsp;&emsp;lose: " + json.trades.lose
+							+ "<br>&emsp;Depo<br>&emsp;&emsp;base: " + json.depo.base
+							+ "<br>&emsp;&emsp;start_value: " + json.depo.start_value
+							+ "<br>&emsp;&emsp;end_value: " + json.depo.end_value
+							+ "<br>&emsp;&emsp;min_value: " + json.depo.min_value
+							+ "<br>&emsp;&emsp;min: " + json.depo.min
+							+ "<br>&emsp;&emsp;profit: " + json.depo.profit;
+				$(".info").html(stat_text);
 			});
 			
 			chart.container('plot');
@@ -128,6 +179,15 @@
 	}
 </script>
 <body>
-	<div id="plot"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10">
+				<div class="graph" id="plot"></div>
+            </div>
+            <div class="col-md-2">
+                <div class="info"></div>
+            </div>
+		</div>
+     </div>
 </body>
 </html>
